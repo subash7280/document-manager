@@ -22,6 +22,7 @@
 // ==================================================================
 
 const GRAPHQL_URL = import.meta.env.VITE_GRAPHQL_URL // '/graphql';
+console.log('GRAPHQL_URL :>> ', GRAPHQL_URL);
 
 // Fired when the server says "you are not signed in" (lib/auth.jsx
 // listens and shows the sign-in page).
