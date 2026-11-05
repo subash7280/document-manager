@@ -21,7 +21,7 @@
 // session cookie automatically. No token is ever handled in JavaScript.
 // ==================================================================
 
-const GRAPHQL_URL = '/graphql';
+const GRAPHQL_URL = import.meta.env.VITE_GRAPHQL_URL // '/graphql';
 
 // Fired when the server says "you are not signed in" (lib/auth.jsx
 // listens and shows the sign-in page).
