@@ -1,0 +1,38 @@
+{
+  "name": "doc-manager-backend",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "test": "node --test --test-concurrency=1 \"test/*.test.js\"",
+    "assign-legacy": "node scripts/assign-legacy-documents.js",
+    "seed-config": "node scripts/seed-app-config.js"
+  },
+  "dependencies": {
+    "cookie-parser": "^1.4.7",
+    "dotenv": "^16.0.0",
+    "express": "^4.18.2",
+    "express-rate-limit": "^8.7.1",
+    "graphql": "^16.14.2",
+    "graphql-yoga": "^5.24.4",
+    "helmet": "^8.3.0",
+    "mongoose": "^7.3.1",
+    "nodemailer": "^10.2.1",
+    "openid-client": "^6.8.8",
+    "ua-parser-js": "^1.0.41"
+  },
+  "devDependencies": {
+    "mongodb-memory-server": "^10.4.3",
+    "nodemon": "^2.0.22"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "config": {
+    "mongodbMemoryServer": {
+      "disablePostinstall": "1"
+    }
+  }
+}

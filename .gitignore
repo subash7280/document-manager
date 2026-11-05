@@ -1,0 +1,64 @@
+
+# =========================
+# Dependencies
+# =========================
+node_modules/
+.pnpm-store/
+
+# =========================
+# Environment Variables
+# =========================
+.env
+.env.*
+!.env.example
+!.env.sample
+
+# =========================
+# Build Outputs
+# =========================
+dist/
+build/
+coverage/
+.vite/
+.next/
+out/
+*.tsbuildinfo
+
+# =========================
+# Logs
+# =========================
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# =========================
+# Temporary Files
+# =========================
+tmp/
+temp/
+.cache/
+*.tmp
+
+# =========================
+# IDE / Editor
+# =========================
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# =========================
+# Operating System
+# =========================
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# =========================
+# Local Uploads
+# =========================
+uploads/
+storage/

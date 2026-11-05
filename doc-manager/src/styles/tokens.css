@@ -1,0 +1,146 @@
+/* ==================================================================
+   DESIGN TOKENS
+   Every color, radius, shadow and spacing value used by the app lives
+   here, once for the light theme and once for the dark theme. Components
+   (app.css) only use these variables, so both themes always match.
+   The theme is chosen by the data-bs-theme attribute on <html>, which
+   Bootstrap 5.3 also understands for its own components.
+   ================================================================== */
+
+:root,
+[data-bs-theme="light"] {
+  /* Surfaces */
+  --dm-bg: #f6f7f9;
+  --dm-surface: #ffffff;
+  --dm-surface-2: #f1f3f6;
+  --dm-surface-3: #e7eaef;
+  --dm-border: #e1e4ea;
+  --dm-border-strong: #c9ced8;
+
+  /* Text */
+  --dm-text: #14171c;
+  --dm-text-muted: #5b6270;
+  --dm-text-subtle: #7b8291;
+
+  /* Brand / intent */
+  --dm-primary: #4f46e5;
+  --dm-primary-hover: #4338ca;
+  --dm-primary-active: #3730a3;
+  --dm-primary-soft: #eef0ff;
+  --dm-on-primary: #ffffff;
+  --dm-danger: #d92d20;
+  --dm-danger-hover: #b42318;
+  --dm-danger-soft: #fef3f2;
+  --dm-success: #079455;
+  --dm-success-soft: #ecfdf3;
+  --dm-warning: #b54708;
+  --dm-warning-soft: #fffaeb;
+
+  /* File type accents */
+  --dm-type-pdf: #d92d20;
+  --dm-type-image: #7a5af8;
+  --dm-type-doc: #1570ef;
+  --dm-type-sheet: #079455;
+  --dm-type-slides: #dc6803;
+  --dm-type-other: #667085;
+  --dm-folder: #c27803;
+
+  /* Effects */
+  --dm-focus-ring: 0 0 0 3px rgba(79, 70, 229, 0.35);
+  --dm-shadow-sm: 0 1px 2px rgba(16, 24, 40, 0.06);
+  --dm-shadow: 0 1px 3px rgba(16, 24, 40, 0.08), 0 1px 2px rgba(16, 24, 40, 0.04);
+  --dm-shadow-lg: 0 12px 32px -8px rgba(16, 24, 40, 0.18), 0 4px 8px -4px rgba(16, 24, 40, 0.06);
+  --dm-backdrop: rgba(15, 18, 25, 0.45);
+}
+
+[data-bs-theme="dark"] {
+  --dm-bg: #0e1015;
+  --dm-surface: #161920;
+  --dm-surface-2: #1c2029;
+  --dm-surface-3: #262b36;
+  --dm-border: #2a2f3b;
+  --dm-border-strong: #3a4050;
+
+  --dm-text: #e8eaef;
+  --dm-text-muted: #a0a7b4;
+  --dm-text-subtle: #7d8494;
+
+  --dm-primary: #8b93ff;
+  --dm-primary-hover: #a3a9ff;
+  --dm-primary-active: #b8bdff;
+  --dm-primary-soft: rgba(139, 147, 255, 0.14);
+  --dm-on-primary: #0e1015;
+  --dm-danger: #f97066;
+  --dm-danger-hover: #fda29b;
+  --dm-danger-soft: rgba(249, 112, 102, 0.12);
+  --dm-success: #47cd89;
+  --dm-success-soft: rgba(71, 205, 137, 0.12);
+  --dm-warning: #fdb022;
+  --dm-warning-soft: rgba(253, 176, 34, 0.12);
+
+  --dm-type-pdf: #f97066;
+  --dm-type-image: #a48afb;
+  --dm-type-doc: #53b1fd;
+  --dm-type-sheet: #47cd89;
+  --dm-type-slides: #fd853a;
+  --dm-type-other: #98a2b3;
+  --dm-folder: #f5b83d;
+
+  --dm-focus-ring: 0 0 0 3px rgba(139, 147, 255, 0.45);
+  --dm-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --dm-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+  --dm-shadow-lg: 0 16px 40px -8px rgba(0, 0, 0, 0.6);
+  --dm-backdrop: rgba(0, 0, 0, 0.6);
+}
+
+:root {
+  /* Shape and rhythm (same in both themes) */
+  --dm-radius-sm: 6px;
+  --dm-radius: 10px;
+  --dm-radius-lg: 14px;
+  --dm-radius-pill: 999px;
+  --dm-space-1: 4px;
+  --dm-space-2: 8px;
+  --dm-space-3: 12px;
+  --dm-space-4: 16px;
+  --dm-space-5: 24px;
+  --dm-space-6: 32px;
+  --dm-space-7: 48px;
+  --dm-font: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --dm-font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  --dm-control-h-sm: 32px;
+  --dm-control-h: 40px;
+  --dm-control-h-lg: 48px;
+  --dm-header-h: 60px;
+  --dm-sidebar-w: 236px;
+  --dm-tabbar-h: 60px;
+  --dm-transition: 120ms ease;
+}
+
+/* Map the tokens onto Bootstrap's own variables, so Bootstrap pieces
+   (grid, forms, utilities) follow the same theme. */
+:root,
+[data-bs-theme] {
+  --bs-body-font-family: var(--dm-font);
+  --bs-body-bg: var(--dm-bg);
+  --bs-body-color: var(--dm-text);
+  --bs-secondary-color: var(--dm-text-muted);
+  --bs-tertiary-color: var(--dm-text-subtle);
+  --bs-secondary-bg: var(--dm-surface-2);
+  --bs-tertiary-bg: var(--dm-surface-2);
+  --bs-border-color: var(--dm-border);
+  --bs-emphasis-color: var(--dm-text);
+  --bs-heading-color: var(--dm-text);
+  --bs-link-color: var(--dm-primary);
+  --bs-link-hover-color: var(--dm-primary-hover);
+  --bs-link-color-rgb: 79, 70, 229;
+  --bs-border-radius: var(--dm-radius-sm);
+  --bs-border-radius-lg: var(--dm-radius);
+  --bs-focus-ring-color: transparent;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --dm-transition: 0ms;
+  }
+}
