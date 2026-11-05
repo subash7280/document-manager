@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Never send this site's addresses (which can contain share links) to other sites. -->
+    <meta name="referrer" content="same-origin" />
+    <meta name="color-scheme" content="light dark" />
+    <title>Doc Manager</title>
+    <!-- Tab icon. Document viewer pages swap it for a neutral icon (no app branding). -->
+    <link id="favicon" rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="theme-color" content="#4f46e5" />
+    <!-- Applies the saved light/dark theme BEFORE the page is drawn (no flash). -->
+    <script src="/theme-init.js"></script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>
