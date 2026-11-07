@@ -276,7 +276,10 @@ export function createApp({ config, providers, mailer = null }) {
         // A 20 MB file plus the multipart wrapping around it.
         maxRequestBodySize: MAX_FILE_SIZE + 1024 * 1024,
         // Same-origin only (see README), so no CORS headers are sent.
-        cors: false,
+        cors: {
+            origin: config.appOrigin,
+            credentials: true
+        },
         logging: config.isProduction ? 'warn' : 'info',
     });
 
