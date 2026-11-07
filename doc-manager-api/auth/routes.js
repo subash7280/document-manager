@@ -35,7 +35,9 @@ export function safeReturnTo(value, fallback = '/') {
 
 export function createAuthRouter({ config, providers, reportException }) {
     const router = express.Router();
-    const redirectUri = (provider) => `${config.appOrigin}/auth/${provider.id}/callback`;
+
+    const redirectUri = (provider) =>
+        `${config.apiOrigin}/auth/${provider.id}/callback`;
 
     // Activity log entry for a sign-in event (see activity/log.js).
     const log = (req, userId, action, provider, extra = {}) => recordActivity({
