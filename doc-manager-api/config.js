@@ -12,7 +12,7 @@ export function createConfig(env = process?.env) {
     // The address people open in the browser (the React app). The API is
     // served from the SAME origin (see README "Deployment"), so session
     // cookies are first-party cookies.
-    const newURL = new URL(env.APP_ORIGIN || 'http://localhost:5173');
+    const newURL = new URL(env.APP_ORIGIN); //  || 'http://localhost:5173'
     console.log('newURL :>> ', newURL);
     const appOrigin = newURL.origin;
     console.log('appOrigin :>> ', appOrigin);
