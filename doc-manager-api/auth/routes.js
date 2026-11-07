@@ -62,11 +62,16 @@ export function createAuthRouter({ config, providers, reportException }) {
     // the code into a friendly message. No details are leaked.
     const failTo = (res, path, code, extra = {}) => {
         const url = new URL(path, config.appOrigin);
+
         url.searchParams.set('error', code);
+
         for (const [key, value] of Object.entries(extra)) {
-            if (value) url.searchParams.set(key, value);
+            if (value) {
+                url.searchParams.set(key, value);
+            }
         }
-        res.redirect(303, url.pathname + url.search);
+
+        res.redirect(303, url.toString());
     };
 
     router.get('/providers', (_req, res) => {
