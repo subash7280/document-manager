@@ -70,18 +70,18 @@ export async function graphqlRequest(query, variables = {}) {
                 ),
             },
         );
-        console.log('res 1 :>> ', res);
+        console.log('res 1 :>> ', typeof res, res,);
     }
     catch (error) {
         console.log('error in the graphqlRequest function of "res" :>> ', error);
         throw Object.assign(new Error('Network error. Check your connection and try again.'), { code: 'NETWORK' });
     };
-    console.log('res 2 :>> ', res);
+    console.log('res 2 :>> ', typeof res, res,);
 
     let body;
     try {
         body = await res.json();
-        console.log('body 1 :>> ', body);
+        console.log('body 1 :>> ', typeof body, body,);
     }
     catch (error) {
         console.log('error in the graphqlRequest function of "body" :>> ', error);
@@ -90,7 +90,7 @@ export async function graphqlRequest(query, variables = {}) {
         // or a proxy returned an HTML error page).
         throw new Error(`Server returned ${res.status} ${res.statusText}`);
     };
-    console.log('body 2 :>> ', body);
+    console.log('body 2 :>> ', typeof body, body,);
 
     // GraphQL can return partial data together with errors. To keep
     // this app simple, ANY error is treated as a failure.
