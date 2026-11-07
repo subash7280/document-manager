@@ -17,76 +17,88 @@ import { FullPageSpinner } from '../components/Spinner';
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
-  const [state, setState] = useState({ status: 'loading', user: null });
+    const [state, setState] = useState({ status: 'loading', user: null });
+    console.log('state in the AuthProvider  () :>> ', state);
 
-  const refresh = useCallback(async () => {
-    try {
-      const data = await graphqlRequest(ME);
-      setState({ status: data.me ? 'signedIn' : 'signedOut', user: data.me });
-    } catch {
-      setState((prev) => (prev.status === 'signedIn' ? prev : { status: 'error', user: null }));
-    }
-  }, []);
+    const refresh = useCallback(async () => {
+        try {
+            const data = await graphqlRequest(ME);
+            console.log('data in the refresh function :>> ', data);
 
-  useEffect(() => {
-    refresh();
-  }, [refresh]);
+            setState({ status: data.me ? 'signedIn' : 'signedOut', user: data.me });
+        }
+        catch (error) {
+            console.log('error in the refresh function :>> ', error);
 
-  // Any API call answering UNAUTHENTICATED (session expired, signed out
-  // in another tab...) sends the user back to the sign-in page.
-  useEffect(() => {
-    const onUnauthenticated = () => setState({ status: 'signedOut', user: null });
-    window.addEventListener(UNAUTHENTICATED_EVENT, onUnauthenticated);
-    return () => window.removeEventListener(UNAUTHENTICATED_EVENT, onUnauthenticated);
-  }, []);
+            setState((prev) => (prev.status === 'signedIn' ? prev : { status: 'error', user: null }));
+        };
+    }, []);
 
-  const signOut = useCallback(async ({ everywhere = false } = {}) => {
-    const res = await fetch(everywhere ? '/auth/signout-all' : '/auth/signout', {
-      method: 'POST',
-      credentials: 'same-origin'
-    });
-    if (!res.ok) throw new Error('Sign out failed. Please try again.');
-    setState({ status: 'signedOut', user: null });
-  }, []);
+    useEffect(() => {
+        refresh();
+    }, [refresh]);
 
-  const setUser = useCallback((user) => setState({ status: 'signedIn', user }), []);
+    // Any API call answering UNAUTHENTICATED (session expired, signed out
+    // in another tab...) sends the user back to the sign-in page.
+    useEffect(() => {
+        const onUnauthenticated = () => setState({ status: 'signedOut', user: null });
+        window.addEventListener(UNAUTHENTICATED_EVENT, onUnauthenticated);
+        return () => window.removeEventListener(UNAUTHENTICATED_EVENT, onUnauthenticated);
+    }, []);
 
-  return (
-    <AuthContext.Provider value={{ ...state, refresh, signOut, setUser }}>
-      {children}
-    </AuthContext.Provider>
-  );
-}
+    const signOut = useCallback(async ({ everywhere = false } = {}) => {
+        const res = await fetch(everywhere ? '/auth/signout-all' : '/auth/signout', {
+            method: 'POST',
+            credentials: 'same-origin'
+        });
+        if (!res.ok) throw new Error('Sign out failed. Please try again.');
+        setState({ status: 'signedOut', user: null });
+    }, []);
+
+    const setUser = useCallback((user) => setState({ status: 'signedIn', user }), []);
+
+    return (
+        <AuthContext.Provider value={{ ...state, refresh, signOut, setUser }}>
+            {children}
+        </AuthContext.Provider>
+    );
+};
 
 export const useAuth = () => useContext(AuthContext);
 
 // Wraps private routes: shows them only to signed-in users.
 export function RequireAuth() {
-  const { status, refresh } = useAuth();
-  const location = useLocation();
+    const { status, refresh } = useAuth();
+    console.log('status in the RequireAuth() :>> ', status);
+    // console.log('refresh in the RequireAuth() :>> ', refresh);
 
-  if (status === 'loading') return <FullPageSpinner label="Loading your workspace" />;
-  if (status === 'error') {
-    return (
-      <main className="auth-page">
-        <div className="ui-card ui-card-body text-center" style={{ maxWidth: 420 }}>
-          <h1 className="ui-h2 mb-2">Can't reach the server</h1>
-          <p className="ui-muted">Check your connection and try again.</p>
-          <Button variant="primary" icon={RefreshCw} onClick={refresh}>Try again</Button>
-        </div>
-      </main>
-    );
-  }
-  if (status === 'signedOut') {
-    const returnTo = location.pathname + location.search;
-    return <Navigate to={`/signin?returnTo=${encodeURIComponent(returnTo)}`} replace />;
-  }
-  return <Outlet />;
-}
+    const location = useLocation();
+
+    if (status === 'loading') return <FullPageSpinner label="Loading your workspace" />;
+
+    if (status === 'error') {
+        return (
+            <main className="auth-page">
+                <div className="ui-card ui-card-body text-center" style={{ maxWidth: 420 }}>
+                    <h1 className="ui-h2 mb-2">Can't reach the server</h1>
+                    <p className="ui-muted">Check your connection and try again.</p>
+                    <Button variant="primary" icon={RefreshCw} onClick={refresh}>Try again</Button>
+                </div>
+            </main>
+        );
+    };
+
+    if (status === 'signedOut') {
+        const returnTo = location.pathname + location.search;
+        return <Navigate to={`/signin?returnTo=${encodeURIComponent(returnTo)}`} replace />;
+    };
+
+    return <Outlet />;
+};
 
 // Wraps admin routes (inside RequireAuth): non-admins go to their
 // documents. The API refuses admin queries for them anyway.
 export function RequireAdmin() {
-  const { user } = useAuth();
-  return user?.isAdmin ? <Outlet /> : <Navigate to="/" replace />;
-}
+    const { user } = useAuth();
+    return user?.isAdmin ? <Outlet /> : <Navigate to="/" replace />;
+};

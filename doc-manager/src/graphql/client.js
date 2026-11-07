@@ -36,48 +36,71 @@ export const UNAUTHENTICATED_EVENT = 'dm:unauthenticated';
 // fromServer: the server already knows about this error (and emailed
 // it if it was unexpected), so lib/errorReporting.js does not resend it.
 export function errorFromBody(body, status) {
-  const error = new Error(body?.errors?.map((e) => e.message).join('\n') || `Server returned ${status}`);
-  error.code = body?.errors?.[0]?.extensions?.code;
-  error.fromServer = true;
-  if (error.code === 'UNAUTHENTICATED') {
-    window.dispatchEvent(new Event(UNAUTHENTICATED_EVENT));
-  }
-  return error;
-}
+    const error = new Error(body?.errors?.map((e) => e?.message)?.join('\n') || `Server returned ${status}`);
+
+    error.code = body?.errors?.[0]?.extensions?.code;
+    error.fromServer = true;
+
+    if (error?.code === 'UNAUTHENTICATED') {
+        window.dispatchEvent(new Event(UNAUTHENTICATED_EVENT));
+    };
+
+    return error;
+};
 
 // Sends a query or mutation and returns its "data" object.
 // Throws an Error (with the server's message) if anything went wrong.
 export async function graphqlRequest(query, variables = {}) {
-  let res;
-  try {
-    res = await fetch(GRAPHQL_URL, {
-      method: 'POST',
-      credentials: 'same-origin',
-      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-      body: JSON.stringify({ query, variables })
-    });
-  } catch {
-    throw Object.assign(new Error('Network error. Check your connection and try again.'), { code: 'NETWORK' });
-  }
+    let res;
+    try {
+        res = await fetch(
+            GRAPHQL_URL,
+            {
+                method: 'POST',
+                credentials: 'same-origin',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Accept: 'application/json',
+                },
+                body: JSON.stringify(
+                    {
+                        query,
+                        variables,
+                    },
+                ),
+            },
+        );
+        console.log('res 1 :>> ', res);
+    }
+    catch (error) {
+        console.log('error in the graphqlRequest function of "res" :>> ', error);
+        throw Object.assign(new Error('Network error. Check your connection and try again.'), { code: 'NETWORK' });
+    };
+    console.log('res 2 :>> ', res);
 
-  let body;
-  try {
-    body = await res.json();
-  } catch {
-    // The server did not answer with JSON at all (e.g. it is down,
-    // or a proxy returned an HTML error page).
-    throw new Error(`Server returned ${res.status} ${res.statusText}`);
-  }
+    let body;
+    try {
+        body = await res.json();
+        console.log('body 1 :>> ', body);
+    }
+    catch (error) {
+        console.log('error in the graphqlRequest function of "body" :>> ', error);
 
-  // GraphQL can return partial data together with errors. To keep
-  // this app simple, ANY error is treated as a failure.
-  if (body.errors && body.errors.length > 0) {
-    throw errorFromBody(body, res.status);
-  }
+        // The server did not answer with JSON at all (e.g. it is down,
+        // or a proxy returned an HTML error page).
+        throw new Error(`Server returned ${res.status} ${res.statusText}`);
+    };
+    console.log('body 2 :>> ', body);
 
-  if (!body.data) {
-    throw new Error(`Server returned ${res.status} ${res.statusText}`);
-  }
+    // GraphQL can return partial data together with errors. To keep
+    // this app simple, ANY error is treated as a failure.
+    if (body?.errors && body?.errors?.length > 0) {
+        throw errorFromBody(body, res?.status);
+    };
 
-  return body.data;
-}
+    if (!body?.data) {
+        throw new Error(`Server returned ${res?.status} ${res?.statusText}`);
+    };
+
+    return body?.data;
+};
