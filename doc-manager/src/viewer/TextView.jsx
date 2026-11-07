@@ -12,7 +12,7 @@ export default function TextView({ url, onReady, onError }) {
 
   useEffect(() => {
     let cancelled = false;
-    fetch(url, { credentials: 'same-origin' })
+    fetch(url, { credentials: 'include' })
       .then((res) => {
         // fromServer: the server's own answer (e.g. 404), not a browser bug.
         if (!res.ok) throw Object.assign(new Error(`Server returned ${res.status}`), { fromServer: true });
