@@ -35,7 +35,7 @@ export function reportError(error, action, { componentStack } = {}) {
     // keepalive: the report still goes out if the page is being left.
     fetch('/api/client-errors', {
       method: 'POST',
-      credentials: 'same-origin',
+      credentials: 'include',
       keepalive: true,
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({

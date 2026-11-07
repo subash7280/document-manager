@@ -171,15 +171,23 @@ export function createAuthRouter({ config, providers, reportException }) {
                 if (!user) return failTo(res, '/signin', 'signin_required');
                 await linkIdentity(user._id, provider.id, profile);
                 await log(req, user._id, 'ACCOUNT_LINKED', provider, { note: profile.email });
-                return res.redirect(303, `${tx.returnTo}${tx.returnTo.includes('?') ? '&' : '?'}linked=${provider.id}`);
-            }
+
+                const returnUrl = new URL(tx.returnTo, config.appOrigin);
+                returnUrl.searchParams.set('linked', provider.id);
+
+                return res.redirect(303, returnUrl.toString());
+            };
 
             const { user, created } = await resolveSignIn(provider.id, profile);
             // Replace any previous session in this browser with a new one.
             if (req.session) await Session.deleteOne({ _id: req.session._id });
             await createSession(req, res, user._id, config);
             await log(req, user._id, created ? 'SIGNED_UP' : 'SIGNED_IN', provider);
-            res.redirect(303, tx.returnTo);
+
+            res.redirect(
+                303,
+                new URL(tx.returnTo, config.appOrigin).toString()
+            );
         } catch (err) {
             if (err instanceof AuthFlowError) {
                 // A failed "Connect" belongs in that user's activity log. (A

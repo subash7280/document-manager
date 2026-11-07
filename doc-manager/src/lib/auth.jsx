@@ -49,7 +49,7 @@ export function AuthProvider({ children }) {
     const signOut = useCallback(async ({ everywhere = false } = {}) => {
         const res = await fetch(everywhere ? '/auth/signout-all' : '/auth/signout', {
             method: 'POST',
-            credentials: 'same-origin'
+            credentials: 'include'
         });
         if (!res.ok) throw new Error('Sign out failed. Please try again.');
         setState({ status: 'signedOut', user: null });
