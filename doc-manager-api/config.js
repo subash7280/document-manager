@@ -12,10 +12,13 @@ export function createConfig(env = process?.env) {
     // The address people open in the browser (the React app). The API is
     // served from the SAME origin (see README "Deployment"), so session
     // cookies are first-party cookies.
-    const newURL = new URL(env.APP_ORIGIN); //  || 'http://localhost:5173'
+    const newURL = new URL(env.APP_ORIGIN);
     console.log('newURL :>> ', newURL);
     const appOrigin = newURL.origin;
     console.log('appOrigin :>> ', appOrigin);
+    
+    const newURL_API = new URL(env.API_ORIGIN);
+    const apiOrigin = newURL_API.origin;
 
     const google = (env.GOOGLE_CLIENT_ID && env.GOOGLE_CLIENT_SECRET)
         ?
@@ -71,8 +74,9 @@ export function createConfig(env = process?.env) {
         port,
         mongoUri: env.MONGO_URI,
         appOrigin,
+        apiOrigin,
         // Browsers only keep "Secure" cookies on https (and localhost).
-        secureCookies: appOrigin.startsWith('https://'),
+        secureCookies: apiOrigin.startsWith('https://'),
         // Number of reverse proxies in front of the API (Netlify, Render,
         // nginx...). Needed for correct client IPs in rate limiting.
         trustProxy: env.TRUST_PROXY ? Number(env.TRUST_PROXY) : 0,
