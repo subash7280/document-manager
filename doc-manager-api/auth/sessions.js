@@ -17,29 +17,29 @@ export const randomToken = () => crypto.randomBytes(32).toString('base64url');
 export const hashToken = (token) => crypto.createHash('sha256').update(token).digest('hex');
 
 const sessionCookieOptions = (config) => ({
-  httpOnly: true,
-  secure: config.secureCookies,
-  sameSite: 'lax',
-  path: '/',
-  maxAge: SESSION_MS
+    httpOnly: true,
+    secure: true,
+    sameSite: 'none',
+    path: '/',
+    maxAge: SESSION_MS
 });
 
 // Creates a brand-new session (a new token on EVERY sign-in, so a token
 // planted before sign-in can never become a signed-in session).
 export async function createSession(req, res, userId, config) {
-  const token = randomToken();
-  await Session.create({
-    tokenHash: hashToken(token),
-    userId,
-    expiresAt: new Date(Date.now() + SESSION_MS),
-    userAgent: req.get('user-agent')?.slice(0, 200)
-  });
-  res.cookie(SESSION_COOKIE, token, sessionCookieOptions(config));
+    const token = randomToken();
+    await Session.create({
+        tokenHash: hashToken(token),
+        userId,
+        expiresAt: new Date(Date.now() + SESSION_MS),
+        userAgent: req.get('user-agent')?.slice(0, 200)
+    });
+    res.cookie(SESSION_COOKIE, token, sessionCookieOptions(config));
 }
 
 export function clearSessionCookie(res, config) {
-  const { maxAge, ...options } = sessionCookieOptions(config);
-  res.clearCookie(SESSION_COOKIE, options);
+    const { maxAge, ...options } = sessionCookieOptions(config);
+    res.clearCookie(SESSION_COOKIE, options);
 }
 
 // ------------------------------------------------------------------
@@ -48,29 +48,29 @@ export function clearSessionCookie(res, config) {
 // is past half its lifetime.
 // ------------------------------------------------------------------
 export function sessionMiddleware(config) {
-  return async (req, res, next) => {
-    try {
-      const token = req.cookies?.[SESSION_COOKIE];
-      if (!token) return next();
+    return async (req, res, next) => {
+        try {
+            const token = req.cookies?.[SESSION_COOKIE];
+            if (!token) return next();
 
-      const session = await Session.findOne({ tokenHash: hashToken(token), expiresAt: { $gt: new Date() } });
-      const user = session && await User.findById(session.userId);
-      if (!session || !user) {
-        clearSessionCookie(res, config);
-        return next();
-      }
+            const session = await Session.findOne({ tokenHash: hashToken(token), expiresAt: { $gt: new Date() } });
+            const user = session && await User.findById(session.userId);
+            if (!session || !user) {
+                clearSessionCookie(res, config);
+                return next();
+            }
 
-      if (session.expiresAt.getTime() - Date.now() < SESSION_MS / 2) {
-        session.expiresAt = new Date(Date.now() + SESSION_MS);
-        await session.save();
-        res.cookie(SESSION_COOKIE, token, sessionCookieOptions(config));
-      }
+            if (session.expiresAt.getTime() - Date.now() < SESSION_MS / 2) {
+                session.expiresAt = new Date(Date.now() + SESSION_MS);
+                await session.save();
+                res.cookie(SESSION_COOKIE, token, sessionCookieOptions(config));
+            }
 
-      req.user = user;
-      req.session = session;
-      next();
-    } catch (err) {
-      next(err);
-    }
-  };
+            req.user = user;
+            req.session = session;
+            next();
+        } catch (err) {
+            next(err);
+        }
+    };
 }
