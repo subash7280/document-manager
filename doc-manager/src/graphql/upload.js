@@ -1,4 +1,4 @@
-import { errorFromBody } from './client';
+import { errorFromBody, GRAPHQL_URL } from './client';
 import { UPLOAD_DOCUMENT } from './operations';
 
 // ==================================================================
@@ -20,45 +20,45 @@ import { UPLOAD_DOCUMENT } from './operations';
 // 'NETWORK', 'BAD_USER_INPUT', ...).
 // folderId: the folder to upload into (null = top level).
 export function uploadDocument(file, uploadId, { folderId = null, onProgress } = {}) {
-  const xhr = new XMLHttpRequest();
+    const xhr = new XMLHttpRequest();
 
-  const promise = new Promise((resolve, reject) => {
-    const form = new FormData();
-    form.append('operations', JSON.stringify({ query: UPLOAD_DOCUMENT, variables: { file: null, uploadId, folderId } }));
-    form.append('map', JSON.stringify({ 0: ['variables.file'] }));
-    form.append('0', file, file.name);
+    const promise = new Promise((resolve, reject) => {
+        const form = new FormData();
+        form.append('operations', JSON.stringify({ query: UPLOAD_DOCUMENT, variables: { file: null, uploadId, folderId } }));
+        form.append('map', JSON.stringify({ 0: ['variables.file'] }));
+        form.append('0', file, file.name);
 
-    xhr.open('POST', '/graphql');
-    xhr.setRequestHeader('Accept', 'application/json');
+        xhr.open('POST', GRAPHQL_URL,);
+        xhr.withCredentials = true;
+        xhr.setRequestHeader('Accept', 'application/json');
 
-    xhr.upload.onprogress = (event) => {
-      if (event.lengthComputable) onProgress?.(event.loaded / event.total);
-    };
+        xhr.upload.onprogress = (event) => {
+            if (event.lengthComputable) onProgress?.(event.loaded / event.total);
+        };
 
-    xhr.onload = () => {
-      let body;
-      try {
-        body = JSON.parse(xhr.responseText);
-      } catch {
-        return reject(Object.assign(
-          new Error(xhr.status === 413 ? 'File is too large. The maximum size is 20 MB.' : `Upload failed (server returned ${xhr.status}).`),
-          { fromServer: xhr.status === 413 }
-        ));
-      }
-      if (body.errors?.length) return reject(errorFromBody(body, xhr.status));
-      if (!body.data?.uploadDocument) return reject(new Error('Upload failed. Please try again.'));
-      resolve(body.data.uploadDocument);
-    };
-    xhr.onerror = () => reject(Object.assign(new Error('The connection was interrupted. Check your connection and try again.'), { code: 'NETWORK' }));
-    xhr.onabort = () => reject(Object.assign(new Error('Upload cancelled.'), { code: 'CANCELLED' }));
+        xhr.onload = () => {
+            let body;
+            try {
+                body = JSON.parse(xhr.responseText);
+            } catch {
+                return reject(Object.assign(
+                    new Error(xhr.status === 413 ? 'File is too large. The maximum size is 20 MB.' : `Upload failed (server returned ${xhr.status}).`),
+                    { fromServer: xhr.status === 413 }
+                ));
+            }
+            if (body.errors?.length) return reject(errorFromBody(body, xhr.status));
+            if (!body.data?.uploadDocument) return reject(new Error('Upload failed. Please try again.'));
+            resolve(body.data.uploadDocument);
+        };
+        xhr.onerror = () => reject(Object.assign(new Error('The connection was interrupted. Check your connection and try again.'), { code: 'NETWORK' }));
+        xhr.onabort = () => reject(Object.assign(new Error('Upload cancelled.'), { code: 'CANCELLED' }));
 
-    xhr.send(form);
-  });
+        xhr.send(form);
+    });
 
-  return { promise, cancel: () => xhr.abort() };
+    return { promise, cancel: () => xhr.abort() };
 }
 
 // A random id for one upload attempt (reused when retrying the SAME
 // file, so the server never stores it twice).
-export const newUploadId = () =>
-  (crypto.randomUUID?.() ?? Array.from(crypto.getRandomValues(new Uint8Array(16)), (b) => b.toString(16).padStart(2, '0')).join(''));
+export const newUploadId = () => (crypto.randomUUID?.() ?? Array.from(crypto.getRandomValues(new Uint8Array(16)), (b) => b.toString(16).padStart(2, '0')).join(''));
