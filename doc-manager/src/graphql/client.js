@@ -79,17 +79,36 @@ export async function graphqlRequest(query, variables = {}) {
     console.log('res 2 :>> ', typeof res, res,);
 
     let body;
+
+
+    // try {
+    //     body = await res.json();
+    //     console.log('body 1 :>> ', typeof body, body,);
+    // }
+    // catch (error) {
+    //     console.log('error in the graphqlRequest function of "body" :>> ', error);
+
+    //     // The server did not answer with JSON at all (e.g. it is down,
+    //     // or a proxy returned an HTML error page).
+    //     throw new Error(`Server returned ${res.status} ${res.statusText}`);
+    // };
+
+    const rawResponse = await res.text();
+    console.log('GraphQL HTTP status:', res.status);
+    console.log('GraphQL Content-Type:', res.headers.get('content-type'));
+    console.log('GraphQL Response Body:', JSON.stringify(rawResponse));
+
     try {
-        body = await res.json();
-        console.log('body 1 :>> ', typeof body, body,);
+        body = JSON.parse(rawResponse);
     }
     catch (error) {
-        console.log('error in the graphqlRequest function of "body" :>> ', error);
+        console.error('Invalid GraphQL JSON response:', error);
 
-        // The server did not answer with JSON at all (e.g. it is down,
-        // or a proxy returned an HTML error page).
-        throw new Error(`Server returned ${res.status} ${res.statusText}`);
-    };
+        throw new Error(
+            `Invalid API response. Status: ${res.status}, Body: ${rawResponse || '<EMPTY RESPONSE>'}`
+        );
+    }
+
     console.log('body 2 :>> ', typeof body, body,);
 
     // GraphQL can return partial data together with errors. To keep
