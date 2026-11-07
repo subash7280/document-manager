@@ -20,6 +20,8 @@ const sessionCookieOptions = (config) => ({
     httpOnly: true,
     secure: true,
     sameSite: 'none',
+    // secure: config.secureCookies,
+    // sameSite: 'lax',
     path: '/',
     maxAge: SESSION_MS
 });
