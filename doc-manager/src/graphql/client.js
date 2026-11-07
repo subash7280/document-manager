@@ -21,7 +21,10 @@
 // session cookie automatically. No token is ever handled in JavaScript.
 // ==================================================================
 
-const GRAPHQL_URL = import.meta.env.VITE_GRAPHQL_URL // '/graphql';
+export const API_ENDPOINT = import.meta.env.VITE_API_ENDPOINT;
+console.log('API_ENDPOINT :>> ', API_ENDPOINT);
+
+export const GRAPHQL_URL = import.meta.env.VITE_GRAPHQL_URL; // '/graphql';
 console.log('GRAPHQL_URL :>> ', GRAPHQL_URL);
 
 // Fired when the server says "you are not signed in" (lib/auth.jsx

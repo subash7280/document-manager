@@ -3,6 +3,7 @@ import path from 'node:path';
 import express from 'express';
 import cookieParser from 'cookie-parser';
 import helmet from 'helmet';
+import cors from 'cors';
 import { rateLimit } from 'express-rate-limit';
 import { GraphQLError, getOperationAST } from 'graphql';
 import { createYoga, createSchema } from 'graphql-yoga';
@@ -187,13 +188,23 @@ export function createApp({ config, providers, mailer = null }) {
                 console.log('Content-Length:', res.getHeader('content-length'));
                 console.log('Response ended:', res.writableEnded);
             });
-        }
+        };
+
         next();
     });
 
-
     app.disable('x-powered-by');
+
     if (config.trustProxy) app.set('trust proxy', config.trustProxy);
+
+    // --------------------------------------------------
+    // CORS CONFIGURATION
+    // Allow requests only from our React application.
+    // --------------------------------------------------
+    app.use(cors({
+        origin: config.appOrigin,
+        credentials: true
+    }));
 
     // One reporter for the whole app; index.js also uses it for crashes.
     const reportException = createExceptionReporter({ config, mailer });
