@@ -57,7 +57,7 @@ export async function graphqlRequest(query, variables = {}) {
             GRAPHQL_URL,
             {
                 method: 'POST',
-                credentials: 'same-origin',
+                credentials: 'include',
                 headers: {
                     'Content-Type': 'application/json',
                     Accept: 'application/json',
