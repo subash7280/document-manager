@@ -88,7 +88,7 @@ export function startJobs({ config, reportException }) {
   job.enabled = enabled;
   if (!enabled) {
     console.log('[jobs] keep-alive health check is switched off (KEEP_ALIVE_ENABLED=false)');
-    return { stop() {} };
+    return { stop() { } };
   }
 
   job.intervalMinutes = intervalMinutes;
